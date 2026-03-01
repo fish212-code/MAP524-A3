@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue_slate</item>
+        <item name="colorPrimaryDark">@color/charcoal_blue</item>
+        <item name="colorAccent">@color/powder_blush</item>
+        <item name="android:windowBackground">@color/vanilla_cream</item>
+    </style>
+
+    <!-- Numpad digit button -->
+    <style name="NumpadButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:backgroundTint">@color/light_blue</item>
+        <item name="android:textColor">@color/blue_slate</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <!-- Buy button -->
+    <style name="BuyButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:backgroundTint">@color/powder_blush</item>
+        <item name="android:textColor">@color/blue_slate</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <!-- Info card TextViews -->
+    <style name="InfoCard">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@color/icy_aqua</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textColor">@color/blue_slate</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <!-- List header column -->
+    <style name="HeaderText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@color/blue_slate</item>
+        <item name="android:textColor">@color/vanilla_cream</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">6dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+</resources>

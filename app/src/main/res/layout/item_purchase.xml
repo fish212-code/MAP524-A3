@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="@color/vanilla_cream">
+
+    <TextView
+        android:id="@+id/tvPurchaseName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/blue_slate"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/tvPurchaseQty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/blue_slate"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/tvPurchaseTotal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/blue_slate"
+        android:textStyle="bold"
+        android:textSize="15sp"/>
+</LinearLayout>
