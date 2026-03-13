@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -22,13 +20,14 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.cashregister.ui.theme.BlueSlate
 import com.example.cashregister.ui.theme.PowderBlush
 import com.example.cashregister.ui.theme.VanillaCream
 import com.example.cashregister.viewmodel.CashRegisterViewModel
 
 @Composable
-fun HistoryListScreen(viewModel: CashRegisterViewModel) {
+fun HistoryListScreen(viewModel: CashRegisterViewModel, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,19 +50,20 @@ fun HistoryListScreen(viewModel: CashRegisterViewModel) {
         }
 
         // Purchase list
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            itemsIndexed(viewModel.purchaseHistory) { index, purchase ->
+            viewModel.purchaseHistory.forEachIndexed { index, purchase ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(VanillaCream)
                         .clickable {
-                            viewModel.viewHistoryDetail(index)
+                            viewModel.selectHistoryItem(index)
+                            navController.navigate("history_detail")
                         }
                         .padding(12.dp)
                 ) {
@@ -97,7 +97,7 @@ fun HistoryListScreen(viewModel: CashRegisterViewModel) {
             contentAlignment = Alignment.Center
         ) {
             Button(
-                onClick = { viewModel.navigateTo("manager") },
+                onClick = { navController.popBackStack() },
                 colors = ButtonDefaults.buttonColors(containerColor = PowderBlush),
                 shape = RectangleShape
             ) {

@@ -18,13 +18,17 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.cashregister.ui.theme.BlueSlate
 import com.example.cashregister.ui.theme.PowderBlush
 import com.example.cashregister.ui.theme.VanillaCream
 import com.example.cashregister.viewmodel.CashRegisterViewModel
 
 @Composable
-fun HistoryDetailScreen(viewModel: CashRegisterViewModel) {
+fun HistoryDetailScreen(
+    viewModel: CashRegisterViewModel,
+    navController: NavController
+) {
     val purchase = viewModel.purchaseHistory.getOrNull(viewModel.selectedHistoryIndex)
 
     Column(
@@ -84,10 +88,10 @@ fun HistoryDetailScreen(viewModel: CashRegisterViewModel) {
             )
         }
 
-        // Spacer to push back button to bottom
+        // Spacer
         Box(modifier = Modifier.weight(1f))
 
-        // Back button
+        // Back
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -95,7 +99,7 @@ fun HistoryDetailScreen(viewModel: CashRegisterViewModel) {
             contentAlignment = Alignment.Center
         ) {
             Button(
-                onClick = { viewModel.navigateTo("history_list") },
+                onClick = { navController.popBackStack() },
                 colors = ButtonDefaults.buttonColors(containerColor = PowderBlush),
                 shape = RectangleShape
             ) {

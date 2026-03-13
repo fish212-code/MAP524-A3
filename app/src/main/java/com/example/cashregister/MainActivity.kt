@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.cashregister.ui.screen.HistoryDetailScreen
 import com.example.cashregister.ui.screen.HistoryListScreen
 import com.example.cashregister.ui.screen.MainScreen
@@ -25,14 +28,40 @@ class MainActivity : ComponentActivity() {
         setContent {
             CashRegisterTheme {
                 val viewModel: CashRegisterViewModel = viewModel()
+                val navController = rememberNavController()
 
                 Box(modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)) {
-                    when (viewModel.currentScreen) {
-                        "main" -> MainScreen(viewModel = viewModel)
-                        "manager" -> ManagerScreen(viewModel = viewModel)
-                        "restock" -> RestockScreen(viewModel = viewModel)
-                        "history_list" -> HistoryListScreen(viewModel = viewModel)
-                        "history_detail" -> HistoryDetailScreen(viewModel = viewModel)
+                    NavHost(
+                        navController = navController,
+                        startDestination = "main"
+                    ) {
+                        composable("main") {
+                            MainScreen(
+                                viewModel = viewModel,
+                                navController = navController
+                            )
+                        }
+                        composable("manager") {
+                            ManagerScreen(navController = navController)
+                        }
+                        composable("restock") {
+                            RestockScreen(
+                                viewModel = viewModel,
+                                navController = navController
+                            )
+                        }
+                        composable("history_list") {
+                            HistoryListScreen(
+                                viewModel = viewModel,
+                                navController = navController
+                            )
+                        }
+                        composable("history_detail") {
+                            HistoryDetailScreen(
+                                viewModel = viewModel,
+                                navController = navController
+                            )
+                        }
                     }
                 }
             }

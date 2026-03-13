@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -20,11 +18,9 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.cashregister.ui.theme.BlueSlate
 import com.example.cashregister.ui.theme.IcyAqua
 import com.example.cashregister.ui.theme.PowderBlush
@@ -43,18 +40,10 @@ import com.example.cashregister.ui.theme.VanillaCream
 import com.example.cashregister.viewmodel.CashRegisterViewModel
 
 @Composable
-fun RestockScreen(viewModel: CashRegisterViewModel) {
+fun RestockScreen(viewModel: CashRegisterViewModel, navController: NavController) {
     val context = LocalContext.current
-    var selectedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var restockQty by rememberSaveable { mutableStateOf("") }
-
-    val toastMessage = viewModel.toastMessage
-    LaunchedEffect(toastMessage) {
-        toastMessage?.let {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            viewModel.clearToast()
-        }
-    }
+    var selectedIndex by remember { mutableStateOf(-1) }
+    var restockQty by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -77,14 +66,14 @@ fun RestockScreen(viewModel: CashRegisterViewModel) {
             )
         }
 
-        // Product list with radio buttons
-        LazyColumn(
+        // Product list
+        Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            itemsIndexed(viewModel.products) { index, product ->
+            viewModel.products.forEachIndexed { index, product ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -110,7 +99,7 @@ fun RestockScreen(viewModel: CashRegisterViewModel) {
             }
         }
 
-        // Quantity input
+        // Quantity
         OutlinedTextField(
             value = restockQty,
             onValueChange = { restockQty = it },
@@ -121,7 +110,7 @@ fun RestockScreen(viewModel: CashRegisterViewModel) {
                 .padding(8.dp)
         )
 
-        // OK / Cancel buttons
+        // OK & Cancel
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -129,7 +118,8 @@ fun RestockScreen(viewModel: CashRegisterViewModel) {
         ) {
             Button(
                 onClick = {
-                    val success = viewModel.handleRestock(selectedIndex, restockQty)
+                    val (success, msg) = viewModel.handleRestock(selectedIndex, restockQty)
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     if (success) {
                         restockQty = ""
                         selectedIndex = -1
@@ -144,7 +134,7 @@ fun RestockScreen(viewModel: CashRegisterViewModel) {
                 Text("OK", color = BlueSlate)
             }
             Button(
-                onClick = { viewModel.navigateTo("manager") },
+                onClick = { navController.popBackStack() },
                 colors = ButtonDefaults.buttonColors(containerColor = PowderBlush),
                 shape = RectangleShape,
                 modifier = Modifier

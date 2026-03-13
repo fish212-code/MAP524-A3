@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.navigation.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

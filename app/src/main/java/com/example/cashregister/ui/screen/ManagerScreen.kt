@@ -20,15 +20,15 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.cashregister.ui.theme.BlueSlate
 import com.example.cashregister.ui.theme.IcyAqua
 import com.example.cashregister.ui.theme.LightBlue
 import com.example.cashregister.ui.theme.PowderBlush
 import com.example.cashregister.ui.theme.VanillaCream
-import com.example.cashregister.viewmodel.CashRegisterViewModel
 
 @Composable
-fun ManagerScreen(viewModel: CashRegisterViewModel) {
+fun ManagerScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,9 +58,9 @@ fun ManagerScreen(viewModel: CashRegisterViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // History button
+            // History
             Button(
-                onClick = { viewModel.navigateTo("history_list") },
+                onClick = { navController.navigate("history_list") },
                 colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                 shape = RectangleShape,
                 modifier = Modifier
@@ -71,9 +71,9 @@ fun ManagerScreen(viewModel: CashRegisterViewModel) {
                 Text("History", color = BlueSlate, fontSize = 18.sp)
             }
 
-            // Restock button
+            // Restock
             Button(
-                onClick = { viewModel.navigateTo("restock") },
+                onClick = { navController.navigate("restock") },
                 colors = ButtonDefaults.buttonColors(containerColor = IcyAqua),
                 shape = RectangleShape,
                 modifier = Modifier
@@ -85,7 +85,7 @@ fun ManagerScreen(viewModel: CashRegisterViewModel) {
             }
         }
 
-        // Back button
+        // Back
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -93,7 +93,7 @@ fun ManagerScreen(viewModel: CashRegisterViewModel) {
             contentAlignment = Alignment.Center
         ) {
             Button(
-                onClick = { viewModel.navigateTo("main") },
+                onClick = { navController.navigate("main") },
                 colors = ButtonDefaults.buttonColors(containerColor = PowderBlush),
                 shape = RectangleShape
             ) {

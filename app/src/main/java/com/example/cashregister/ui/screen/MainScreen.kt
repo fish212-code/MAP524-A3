@@ -4,6 +4,8 @@ import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,15 +17,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.cashregister.model.Product
 import com.example.cashregister.ui.theme.BlueSlate
 import com.example.cashregister.ui.theme.IcyAqua
@@ -43,18 +43,9 @@ import com.example.cashregister.ui.theme.VanillaCream
 import com.example.cashregister.viewmodel.CashRegisterViewModel
 
 @Composable
-fun MainScreen(viewModel: CashRegisterViewModel) {
-    val context = LocalContext.current
+fun MainScreen(viewModel: CashRegisterViewModel, navController: NavController) {
     val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-    val toastMessage = viewModel.toastMessage
-    LaunchedEffect(toastMessage) {
-        toastMessage?.let {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            viewModel.clearToast()
-        }
-    }
+    val isLandscape = configuration.screenWidthDp > configuration.screenHeightDp
 
     Column(
         modifier = Modifier
@@ -62,7 +53,7 @@ fun MainScreen(viewModel: CashRegisterViewModel) {
             .background(VanillaCream)
     ) {
         // Top bar
-        TopBar(onManagerClick = { viewModel.navigateTo("manager") })
+        TopBar(onManagerClick = { navController.navigate("manager") })
 
         if (isLandscape) {
             LandscapeContent(viewModel = viewModel)
@@ -105,11 +96,13 @@ private fun TopBar(onManagerClick: () -> Unit) {
 
 @Composable
 private fun PortraitContent(viewModel: CashRegisterViewModel) {
+    val context = LocalContext.current
+
     Column(modifier = Modifier.fillMaxSize()) {
-        // Info section
+        // Info
         InfoSection(viewModel = viewModel)
 
-        // Numpad + Buy
+        // Numpad
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -121,7 +114,10 @@ private fun PortraitContent(viewModel: CashRegisterViewModel) {
                 modifier = Modifier.weight(1f)
             )
             BuyButton(
-                onClick = { viewModel.handleBuy() },
+                onClick = {
+                    val msg = viewModel.handleBuy()
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                },
                 modifier = Modifier
                     .width(64.dp)
                     .fillMaxHeight()
@@ -129,7 +125,7 @@ private fun PortraitContent(viewModel: CashRegisterViewModel) {
             )
         }
 
-        // Products label
+        // Products
         Text(
             text = "Products",
             color = BlueSlate,
@@ -151,8 +147,10 @@ private fun PortraitContent(viewModel: CashRegisterViewModel) {
 
 @Composable
 private fun LandscapeContent(viewModel: CashRegisterViewModel) {
+    val context = LocalContext.current
+
     Row(modifier = Modifier.fillMaxSize()) {
-        // Left: Product list
+        // Left: Product Lst
         ProductList(
             products = viewModel.products,
             selectedIndex = viewModel.selectedIndex,
@@ -177,10 +175,10 @@ private fun LandscapeContent(viewModel: CashRegisterViewModel) {
                 .fillMaxHeight()
                 .padding(8.dp)
         ) {
-            // Info section
+            // Info
             InfoSection(viewModel = viewModel)
 
-            // Numpad + Other Buttons
+            // Numpad
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -192,7 +190,10 @@ private fun LandscapeContent(viewModel: CashRegisterViewModel) {
                     modifier = Modifier.weight(1f)
                 )
                 BuyButton(
-                    onClick = { viewModel.handleBuy() },
+                    onClick = {
+                        val msg = viewModel.handleBuy()
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                    },
                     modifier = Modifier
                         .width(64.dp)
                         .fillMaxHeight()

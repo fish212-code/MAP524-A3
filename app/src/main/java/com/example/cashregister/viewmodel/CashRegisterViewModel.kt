@@ -1,8 +1,6 @@
 package com.example.cashregister.viewmodel
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -14,39 +12,36 @@ import java.util.Locale
 
 class CashRegisterViewModel : ViewModel() {
 
-    private val _products = mutableStateListOf<Product>()
-    val products: List<Product> = _products
+    var products by mutableStateOf(
+        listOf(
+            Product("Ballpoint Pen", 20, 2.40),
+            Product("Highlighter", 12, 2.40),
+            Product("Permanent Marker", 15, 2.90),
+            Product("Mechanical Pencil", 16, 12.90),
+            Product("Glue Stick", 12, 0.90),
+            Product("Sticky Notes", 18, 2.90),
+            Product("Notepad", 30, 3.90),
+            Product("Ruler", 15, 4.90),
+            Product("Lined Notebook", 10, 8.90),
+            Product("Stapler", 8, 7.90)
+        )
+    )
+        private set
 
-    private val _purchaseHistory = mutableStateListOf<Purchase>()
-    val purchaseHistory: List<Purchase> = _purchaseHistory
+    var purchaseHistory by mutableStateOf(listOf<Purchase>())
+        private set
 
-    var selectedIndex by mutableIntStateOf(-1)
+    var selectedIndex by mutableStateOf(-1)
         private set
 
     var enteredQty by mutableStateOf("")
         private set
 
-    var toastMessage by mutableStateOf<String?>(null)
+    var selectedHistoryIndex by mutableStateOf(-1)
         private set
-
-    // State-based navigation
-    var currentScreen by mutableStateOf("main")
-        private set
-
-    var selectedHistoryIndex by mutableIntStateOf(0)
-        private set
-
-    fun navigateTo(screen: String) {
-        currentScreen = screen
-    }
-
-    fun viewHistoryDetail(index: Int) {
-        selectedHistoryIndex = index
-        currentScreen = "history_detail"
-    }
 
     val selectedProductName: String
-        get() = if (selectedIndex in _products.indices) _products[selectedIndex].name else "No product selected"
+        get() = if (selectedIndex in products.indices) products[selectedIndex].name else "No product selected"
 
     val displayQty: String
         get() = enteredQty.ifEmpty { "0" }
@@ -55,36 +50,17 @@ class CashRegisterViewModel : ViewModel() {
         get() {
             if (selectedIndex < 0 || enteredQty.isEmpty()) return "$0.00"
             val qty = enteredQty.toIntOrNull() ?: 0
-            val total = qty * _products[selectedIndex].price
+            val total = qty * products[selectedIndex].price
             return "$${String.format("%.2f", total)}"
         }
-
-    init {
-        initProducts()
-    }
-
-    private fun initProducts() {
-        if (_products.isEmpty()) {
-            _products.addAll(
-                listOf(
-                    Product("Ballpoint Pen", 20, 2.40),
-                    Product("Highlighter", 12, 2.40),
-                    Product("Permanent Marker", 15, 2.90),
-                    Product("Mechanical Pencil", 16, 12.90),
-                    Product("Glue Stick", 12, 0.90),
-                    Product("Sticky Notes", 18, 2.90),
-                    Product("Notepad", 30, 3.90),
-                    Product("Ruler", 15, 4.90),
-                    Product("Lined Notebook", 10, 8.90),
-                    Product("Stapler", 8, 7.90)
-                )
-            )
-        }
-    }
 
     fun selectProduct(index: Int) {
         selectedIndex = index
         enteredQty = ""
+    }
+
+    fun selectHistoryItem(index: Int) {
+        selectedHistoryIndex = index
     }
 
     fun onNumberClick(number: String) {
@@ -101,62 +77,55 @@ class CashRegisterViewModel : ViewModel() {
         }
     }
 
-    fun handleBuy() {
+    fun handleBuy(): String {
         if (selectedIndex < 0) {
-            toastMessage = "Please select a product!"
-            return
+            return "Please select a product!"
         }
         if (enteredQty.isEmpty()) {
-            toastMessage = "Please enter a quantity!"
-            return
+            return "Please enter a quantity!"
         }
 
         val qty = enteredQty.toIntOrNull() ?: 0
         if (qty == 0) {
-            toastMessage = "Quantity must be greater than 0!"
-            return
+            return "Quantity must be greater than 0!"
         }
 
-        val p = _products[selectedIndex]
+        val p = products[selectedIndex]
         if (qty > p.quantity) {
-            toastMessage = "Not enough stock! Only ${p.quantity} available."
-            return
+            return "Not enough stock! Only ${p.quantity} available."
         }
 
         val total = qty * p.price
-        _products[selectedIndex] = p.copy(quantity = p.quantity - qty)
+        products = products.toMutableList().also {
+            it[selectedIndex] = p.copy(quantity = p.quantity - qty)
+        }
 
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date())
-        _purchaseHistory.add(Purchase(p.name, qty, total, date))
+        purchaseHistory = purchaseHistory + Purchase(p.name, qty, total, date)
 
-        toastMessage = "Purchase successful! Total: $${String.format("%.2f", total)}"
+        val msg = "Purchase successful! Total: $${String.format("%.2f", total)}"
         selectedIndex = -1
         enteredQty = ""
+        return msg
     }
 
-    fun handleRestock(restockSelectedIndex: Int, restockQtyText: String): Boolean {
+    fun handleRestock(restockSelectedIndex: Int, restockQtyText: String): Pair<Boolean, String> {
         if (restockSelectedIndex < 0) {
-            toastMessage = "Please select a product!"
-            return false
+            return Pair(false, "Please select a product!")
         }
         if (restockQtyText.isEmpty()) {
-            toastMessage = "Please enter a quantity!"
-            return false
+            return Pair(false, "Please enter a quantity!")
         }
 
         val addQty = restockQtyText.toIntOrNull() ?: 0
         if (addQty <= 0) {
-            toastMessage = "Quantity must be greater than 0!"
-            return false
+            return Pair(false, "Quantity must be greater than 0!")
         }
 
-        val p = _products[restockSelectedIndex]
-        _products[restockSelectedIndex] = p.copy(quantity = p.quantity + addQty)
-        toastMessage = "Restocked successfully!"
-        return true
-    }
-
-    fun clearToast() {
-        toastMessage = null
+        val p = products[restockSelectedIndex]
+        products = products.toMutableList().also {
+            it[restockSelectedIndex] = p.copy(quantity = p.quantity + addQty)
+        }
+        return Pair(true, "Restocked successfully!")
     }
 }
